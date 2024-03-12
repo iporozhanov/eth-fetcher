@@ -1,0 +1,173 @@
+openapi: 3.0.0
+info:
+  title: eth-fetcher
+  version: 1.0.0
+paths:
+  /api/eth:
+    get:
+      summary: Get transactions
+      description: Get transactions
+      operationId: getTransactions
+      parameters:
+        - name: transactionHashes
+          in: query
+          description: Transaction hashes
+          required: true
+          schema:
+            type: array
+            items:
+              type: string
+        - name: AUTH_TOKEN
+          in: header
+          description: auth JWT token
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  transactions:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/transaction'
+  /api/eth/{rlphex}:
+    get:
+      summary: Get transactions by RLP hex
+      description: Get transactions by RLP hex
+      operationId: getTransactionsByRlpHex
+      parameters:
+        - name: rlphex
+          in: path
+          description: RLP hex
+          required: true
+          schema:
+            type: string
+        - name: AUTH_TOKEN
+          in: header
+          description: auth JWT token
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  transactions:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/transaction'
+  /api/all:
+    get:
+      summary: Get all transactions
+      description: Get all transactions
+      operationId: getAllTransactions
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  transactions:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/transaction'
+  /api/authenticate:
+    post:
+      summary: Authenticate
+      description: Authenticate
+      operationId: authenticate
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  example: 'user'
+                password:
+                  type: string
+                  example: 'pass'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c'
+  /api/my:
+    get:
+      summary: Get user transactions
+      description: Get user transactions
+      operationId: getUserTransactions
+      parameters:
+        - name: AUTH_TOKEN
+          in: header
+          description: auth JWT token
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  transactions:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/transaction'
+components:
+  schemas:
+    transaction:
+      type: object
+      properties:
+        transactionHash:
+          type: string
+          example: '0xc5f96bf1b54d3314425d2379bd77d7ed4e644f7c6e849a74832028b328d4d798'
+        transactionStatus:
+          type: integer
+          example: 1
+        blockHash:
+          type: string
+          example: '0x3ac55cb392661e0d2239267022dc30f32dc4767cdacfd3e342443122b87101d3'
+        blockNumber:
+          type: integer
+          example: 123456
+        from:
+          type: string
+          example: '0x58fA6aB2931B73A22d85617125b936BD3f74e765'
+        to:
+          type: string
+          nullable: true
+          example: '0x302FD86163Cb9Ad5533B3952dafA3B633a82Bc51'
+        contractAddress:
+          type: string
+          nullable: true
+          example: '0x302FD86163Cb9Ad5533B3952dafA3B633a82Bc51'
+        logsCount:
+          type: integer
+          example: 1
+        input:
+          type: string
+          example: '0x97da873c0000000000000000000000000000000000000000000000056bc75e2d63100000000000000000000000000000000000000000000000000000000000000000000400000000000000000000000058fa6ab2931b73a22d85617125b936bd3f74e76512d1a55b318c0be714e7ce8bc54a96ac48813cfcb73cbaa0a6e933fa9a35b7bb212c8f9a45c4430a6fa3cb8b67a28403c51e494615df4f826280256a8ddabde630818902818100e4dcd34866228be9255cbd322590b92ded49868321f0535734587348c4cb450d2d68367f686faa4688410662e9f38dc62a742f71d8e81b40a3c444381ee1245024467c8f29f04f0f83059dee234f1d4ab13e536eb5958adf91782ed3495b36fd5db6e76626771d998d6e4c75eceb58e1c783b33920dcd7723fbfbc33ba6d5ff902030100010000000000000000000000000000000000000000'
+        value:
+          type: integer
+          example: 1265249737905771
